@@ -22,11 +22,24 @@ jobs:
         distribution: 'temurin'
         cache: gradle
 
+    - name: Print Gradle Environment Variables
+      run: |
+        echo "GRADLE_OPTS=$GRADLE_OPTS"
+        echo "JAVA_OPTS=$JAVA_OPTS"
+
+    - name: Unset wrong JVM options
+      run: |
+        unset GRADLE_OPTS
+        unset JAVA_OPTS
+
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
     - name: Build Debug APK
       run: ./gradlew assembleDebug --stacktrace
+      env:
+        GRADLE_OPTS: ""
+        JAVA_OPTS: ""
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
@@ -38,6 +51,9 @@ jobs:
     - name: Build Release APK (unsigned)
       run: ./gradlew assembleRelease --stacktrace
       continue-on-error: true
+      env:
+        GRADLE_OPTS: ""
+        JAVA_OPTS: ""
 
     - name: Upload Release APK
       uses: actions/upload-artifact@v4
